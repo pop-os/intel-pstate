@@ -17,11 +17,23 @@
 //! }
 //! ```
 
+#[macro_use]
+extern crate smart_default;
+
 use std::io::{self, Read, Write};
 use std::fmt::Display;
 use std::fs::{File, OpenOptions};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
+
+#[derive(Copy, Clone, Debug, Eq, Hash, PartialEq, SmartDefault)]
+/// A set of pstate values that was retrieved, or is to be set.
+pub struct PStateValues {
+    pub min_perf_pct: u8,
+    #[default = "100"]
+    pub max_perf_pct: u8,
+    pub no_turbo: bool
+}
 
 /// Handle for fetching and modifying Intel PState kernel parameters.
 /// 
@@ -45,34 +57,51 @@ impl PState {
     }
 
     /// Get the minimum performance percent.
-    pub fn min_perf_pct(&self) -> io::Result<u64> {
+    pub fn min_perf_pct(&self) -> io::Result<u8> {
         parse_file(self.path.join("min_perf_pct"))
     }
 
     /// Set the minimum performance percent.
-    pub fn set_min_perf_pct(&self, value: u64) -> io::Result<()> {
+    pub fn set_min_perf_pct(&self, value: u8) -> io::Result<()> {
         write_file(self.path.join("min_perf_pct"), format!("{}", value))
     }
 
     /// Get the maximum performance percent.
-    pub fn max_perf_pct(&self) -> io::Result<u64> {
+    pub fn max_perf_pct(&self) -> io::Result<u8> {
         parse_file(self.path.join("max_perf_pct"))
     }
 
     /// Set the maximum performance percent.
-    pub fn set_max_perf_pct(&self, value: u64) -> io::Result<()> {
+    pub fn set_max_perf_pct(&self, value: u8) -> io::Result<()> {
         write_file(self.path.join("max_perf_pct"), format!("{}", value))
     }
 
     /// If true, this signifies that turbo is disabled.
     pub fn no_turbo(&self) -> io::Result<bool> {
-        let value: u64 = parse_file(self.path.join("no_turbo"))?;
+        let value: u8 = parse_file(self.path.join("no_turbo"))?;
         Ok(value > 0)
     }
 
     /// Set the no_turbo value; `true` will disable turbo.
     pub fn set_no_turbo(&self, value: bool) -> io::Result<()> {
         write_file(self.path.join("no_turbo"), if value { "1" } else { "0" })
+    }
+
+    pub fn values(&self) -> io::Result<PStateValues> {
+        let values = PStateValues {
+            min_perf_pct: self.min_perf_pct()?,
+            max_perf_pct: self.max_perf_pct()?,
+            no_turbo: self.no_turbo()?
+        };
+
+        Ok(values)
+    }
+
+    /// Set all values in the given config.
+    pub fn set_values(&self, values: PStateValues) -> io::Result<()> {
+        self.set_min_perf_pct(values.min_perf_pct)?;
+        self.set_max_perf_pct(values.max_perf_pct)?;
+        self.set_no_turbo(values.no_turbo)
     }
 }
 

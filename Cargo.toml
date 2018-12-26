@@ -1,6 +1,6 @@
 [package]
 name = "intel-pstate"
-version = "0.1.1-alpha.0"
+version = "0.1.1"
 authors = [
     "Jeremy Soller <jackpot51@gmail.com>",
     "Michael Aaron Murphy <michael@system76.com>"
@@ -13,3 +13,4 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
+smart-default = "=0.2.0"
