@@ -1,6 +1,6 @@
 [package]
 name = "intel-pstate"
-version = "0.1.1"
+version = "0.2.0"
 authors = [
     "Jeremy Soller <jackpot51@gmail.com>",
     "Michael Aaron Murphy <michael@system76.com>"
@@ -11,6 +11,8 @@ categories = ["os::unix-apis"]
 repository = "https://github.com/pop-os/intel-pstate"
 license = "MIT"
 readme = "README.md"
+edition = "2018"
 
 [dependencies]
-smart-default = "=0.2.0"
+smart-default = "0.5"
+err-derive = "0.1"
