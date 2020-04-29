@@ -1,6 +1,6 @@
 [package]
 name = "intel-pstate"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
     "Jeremy Soller <jackpot51@gmail.com>",
     "Michael Aaron Murphy <michael@system76.com>"
@@ -14,5 +14,5 @@ readme = "README.md"
 edition = "2018"
 
 [dependencies]
-smart-default = "0.6"
-err-derive = "0.2"
+smart-default = "0.6.0"
+err-derive = "0.2.4"
