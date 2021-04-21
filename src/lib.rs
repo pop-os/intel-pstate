@@ -3,22 +3,19 @@
 //! # Example
 //!
 //! ```rust,no_run
-//! use std::io;
-//! use intel_pstate::PState;
+//! use intel_pstate::{PState, PStateError};
 //!
-//! fn main() -> io::Result<()> {
-//!     if let Ok(pstate) = PState::new() {
-//!         pstate.set_min_perf_pct(50)?;
-//!         pstate.set_max_perf_pct(100)?;
-//!         pstate.set_no_turbo(false)?;
-//!     }
+//! fn main() -> Result<(), PStateError> {
+//!     let pstate = PState::new()?;
+//!
+//!     pstate.set_min_perf_pct(50)?;
+//!     pstate.set_max_perf_pct(100)?;
+//!     pstate.set_no_turbo(false)?;
 //!
 //!     Ok(())
 //! }
 //! ```
 
-#[macro_use]
-extern crate err_derive;
 #[macro_use]
 extern crate smart_default;
 
@@ -29,22 +26,23 @@ use std::{
     path::{Path, PathBuf},
     str::FromStr,
 };
+use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum PStateError {
-    #[error(display = "failed to get min perf pstate value: {}", _0)]
+    #[error("failed to get min perf pstate value: {0}")]
     GetMinPerf(io::Error),
-    #[error(display = "failed to get max perf pstate value: {}", _0)]
+    #[error("failed to get max perf pstate value: {0}")]
     GetMaxPerf(io::Error),
-    #[error(display = "failed to get no turbo pstate value: {}", _0)]
+    #[error("failed to get no turbo pstate value: {0}")]
     GetNoTurbo(io::Error),
-    #[error(display = "intel_pstate directory not found")]
+    #[error("intel_pstate directory not found")]
     NotFound,
-    #[error(display = "failed to set min perf pstate value to {}: {}", _0, _1)]
+    #[error("failed to set min perf pstate value to {0}: {1}")]
     SetMinPerf(u8, io::Error),
-    #[error(display = "failed to set max perf pstate value to {}: {}", _0, _1)]
+    #[error("failed to set max perf pstate value to {0}: {1}")]
     SetMaxPerf(u8, io::Error),
-    #[error(display = "failed to set no turbo pstate value to {}: {}", _0, _1)]
+    #[error("failed to set no turbo pstate value to {0}: {1}")]
     SetNoTurbo(bool, io::Error),
 }
 
@@ -54,7 +52,7 @@ pub struct PStateValues {
     pub min_perf_pct: u8,
     #[default(100)]
     pub max_perf_pct: u8,
-    pub no_turbo: bool,
+    pub no_turbo:     bool,
 }
 
 impl PStateValues {
