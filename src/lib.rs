@@ -1,3 +1,5 @@
+#![deny(clippy::all)]
+
 //! Crate for fetching and modifying the intel_pstate kernel parameters.
 //!
 //! # Example
@@ -84,7 +86,7 @@ impl PState {
 
     /// Get the minimum performance percent.
     pub fn min_perf_pct(&self) -> Result<u8, PStateError> {
-        parse_file(self.path.join("min_perf_pct")).map_err(|why| PStateError::GetMinPerf(why))
+        parse_file(self.path.join("min_perf_pct")).map_err(PStateError::GetMinPerf)
     }
 
     /// Set the minimum performance percent.
@@ -95,7 +97,7 @@ impl PState {
 
     /// Get the maximum performance percent.
     pub fn max_perf_pct(&self) -> Result<u8, PStateError> {
-        parse_file(self.path.join("max_perf_pct")).map_err(|why| PStateError::GetMaxPerf(why))
+        parse_file(self.path.join("max_perf_pct")).map_err(PStateError::GetMaxPerf)
     }
 
     /// Set the maximum performance percent.
@@ -106,8 +108,8 @@ impl PState {
 
     /// If true, this signifies that turbo is disabled.
     pub fn no_turbo(&self) -> Result<bool, PStateError> {
-        let value = parse_file::<u8, _>(self.path.join("no_turbo"))
-            .map_err(|why| PStateError::GetNoTurbo(why))?;
+        let value =
+            parse_file::<u8, _>(self.path.join("no_turbo")).map_err(PStateError::GetNoTurbo)?;
         Ok(value > 0)
     }
 
