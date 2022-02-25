@@ -187,9 +187,11 @@ impl PState {
             let _ = self.set_hwp_dynamic_boost(boost);
         }
 
-        self.set_min_perf_pct(values.min_perf_pct)?;
-        self.set_max_perf_pct(values.max_perf_pct)?;
-        self.set_no_turbo(values.no_turbo)
+        let result1 = self.set_min_perf_pct(values.min_perf_pct);
+        let result2 = self.set_max_perf_pct(values.max_perf_pct);
+        let result3 = self.set_no_turbo(values.no_turbo);
+
+        result1.and(result2).and(result3)
     }
 }
 
